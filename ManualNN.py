@@ -25,12 +25,15 @@ class Neuron:
         self.weights = {0}
         self.actFun = actFunction
 
+    def initWeights(self,prevLayerSize):
+        self.weights = np.random.rand(1,prevLayerSize)
+
     def calcOutput(self, input):
         a = 0
         for i,inputFrom in enumerate(input):
-            a += inputFrom * self.weights[i] + self.bias
+            a += inputFrom * self.weights[i]
 
-        return self.actFun.act(a)
+        return self.actFun.act(a) #TODO add bias
 
 def makeNNforDataset(dataset,activationFunction):
     name = dataset.metadata["name"]
@@ -45,7 +48,6 @@ def makeNNforDataset(dataset,activationFunction):
     Nn = [[]]
     #init input
     for i in range(features): # hardcode input for dataset
-        print("make neuron",i)
         Nn[0].append(Neuron(activationFunction))
 
 
@@ -54,12 +56,15 @@ def makeNNforDataset(dataset,activationFunction):
         Nn.append([])
         l +=1
         for i in range(size): # hardcode input for dataset
-            print("make neruon in layer",l,"neuron",i)
             Nn[l].append(Neuron(activationFunction))
     
     
     #init output
-            
+    Nn.append([Neuron(activationFunction)])
+
+    print(Nn[0].__len__())
+    print(Nn[1].__len__())
+    print(Nn[2].__len__())
 
 
 
