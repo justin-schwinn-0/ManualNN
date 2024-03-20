@@ -19,7 +19,7 @@ def test1der():
 
 class Neuron:
     #Previous layer is a list of inputNeurons
-    def init(self, actFunction):
+    def __init__(self, actFunction):
         #Initialize all n (+1 for the bias) weights in this neuron upon creation
         self.bias = 0
         self.weights = {0}
@@ -40,8 +40,6 @@ def makeNNforDataset(dataset,activationFunction):
     print("Making NN for Dataset: ", name)
     print("using", features ,"input nodes")
 
-    layers = 1 # 1 hidden. input and output is implied
-
     layerSizes = {4}
 
     Nn = [[]]
@@ -52,7 +50,11 @@ def makeNNforDataset(dataset,activationFunction):
 
 
     #init hidden layer(s)
-
+    for layer in layerSizes:
+        Nn.append([])
+        for i in range(features): # hardcode input for dataset
+            print("make  in layer",layer,"neuron",i)
+            Nn[layer].append(Neuron(activationFunction))
     #init output
 
 
