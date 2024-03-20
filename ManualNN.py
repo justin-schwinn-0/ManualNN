@@ -40,19 +40,19 @@ def makeNNforDataset(dataset,activationFunction):
     print("Making NN for Dataset: ", name)
     print("using", features ,"input nodes")
 
-    layerSizes = [3,5]
+    hiddenlayerSizes = [3,5] # 
 
     Nn = []
 
     #init hidden layer(s)
-    for l,size in enumerate(layerSizes):
+    for l,size in enumerate(hiddenlayerSizes):
         Nn.append([])
         for i in range(size): # hardcode input for dataset
             Nn[l].append(Neuron(activationFunction))
             if l is 0:
-                Nn[l][i].initWeights(features)    
+                Nn[l][i].initWeights(features)
             else:
-                Nn[l][i].initWeights(layerSizes[l-1])
+                Nn[l][i].initWeights(hiddenlayerSizes[l-1])
             print("layer",l,Nn[l][i].str())
     
     #init output
@@ -63,9 +63,13 @@ def makeNNforDataset(dataset,activationFunction):
 
     for layer in Nn:
         print("layer with", layer.__len__(), "Neurons")
+    
+    return Nn
 
-    # NN  should be an array of n=features+1 elements for the first layer
-    # NN [layer][nueron] jagged array
+def forwardPass(Nn,data):
+
+    pass
+
 
 def sigmoid_act(net_sum):
     sigmoid_act1 = 1 / (1 + math.exp(-net_sum)) 
@@ -103,4 +107,4 @@ sigmoid = activationFunction(sigmoid_act,sigmoid_der)
 tanh = activationFunction(tanh_act,tanh_der)
 relu = activationFunction(relu_act,relu_der)
 
-makeNNforDataset(dataset,relu)
+net = makeNNforDataset(dataset,relu)
