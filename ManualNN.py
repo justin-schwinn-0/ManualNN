@@ -11,18 +11,12 @@ class activationFunction:
         self.derivative = deriv
         pass
 
-def test1Act():
-    print("test1 act")
-
-def test1der():
-    print("test1 der")
-
 class Neuron:
     #Previous layer is a list of inputNeurons
     def __init__(self, actFunction):
         #Initialize all n (+1 for the bias) weights in this neuron upon creation
         self.bias = 0
-        self.weights = {0}
+        self.weights = [0]
         self.actFun = actFunction
 
     def initWeights(self,prevLayerSize):
@@ -34,6 +28,9 @@ class Neuron:
             a += inputFrom * self.weights[i]
 
         return self.actFun.act(a) #TODO add bias
+    
+    def str(self):
+        return "(weights: " +  str(self.weights) + ")"
 
 def makeNNforDataset(dataset,activationFunction):
     name = dataset.metadata["name"]
@@ -43,31 +40,29 @@ def makeNNforDataset(dataset,activationFunction):
     print("Making NN for Dataset: ", name)
     print("using", features ,"input nodes")
 
-    layerSizes = {4}
+    layerSizes = [3,5]
 
-    Nn = [[]]
-    #init input
-    for i in range(features): # hardcode input for dataset
-        Nn[0].append(Neuron(activationFunction))
-
+    Nn = []
 
     #init hidden layer(s)
     for l,size in enumerate(layerSizes):
         Nn.append([])
-        l +=1
         for i in range(size): # hardcode input for dataset
             Nn[l].append(Neuron(activationFunction))
-    
+            if l is 0:
+                Nn[l][i].initWeights(features)    
+            else:
+                Nn[l][i].initWeights(layerSizes[l-1])
+            print("layer",l,Nn[l][i].str())
     
     #init output
-    Nn.append([Neuron(activationFunction)])
+    outputNeuron = Neuron(activationFunction)
+    outputNeuron.initWeights(Nn[-1].__len__())
+    print("output:", outputNeuron.str()) 
+    Nn.append([outputNeuron])
 
-    print(Nn[0].__len__())
-    print(Nn[1].__len__())
-    print(Nn[2].__len__())
-
-
-
+    for layer in Nn:
+        print("layer with", layer.__len__(), "Neurons")
 
     # NN  should be an array of n=features+1 elements for the first layer
     # NN [layer][nueron] jagged array
@@ -107,13 +102,5 @@ def relu_der(net_sum):
 sigmoid = activationFunction(sigmoid_act,sigmoid_der)
 tanh = activationFunction(tanh_act,tanh_der)
 relu = activationFunction(relu_act,relu_der)
-
-
-test1 = activationFunction(test1Act,test1der)
-
-test1.activation()
-test1.derivative()
-
-print
 
 makeNNforDataset(dataset,relu)
