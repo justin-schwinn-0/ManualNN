@@ -20,7 +20,7 @@ class Neuron:
         self.actFun = actFunction
 
     def initWeights(self,prevLayerSize):
-        self.weights = np.random.rand(1,prevLayerSize)
+        self.weights = np.random.rand(prevLayerSize)
 
     def calcOutput(self, input):
         a = 0
@@ -40,7 +40,7 @@ def makeNNforDataset(dataset,activationFunction):
     print("Making NN for Dataset: ", name)
     print("using", features ,"input nodes")
 
-    hiddenlayerSizes = [3,5] # 
+    hiddenlayerSizes = [3] # 
 
     Nn = []
 
@@ -49,7 +49,7 @@ def makeNNforDataset(dataset,activationFunction):
         Nn.append([])
         for i in range(size): # hardcode input for dataset
             Nn[l].append(Neuron(activationFunction))
-            if l is 0:
+            if l == 0:
                 Nn[l][i].initWeights(features)
             else:
                 Nn[l][i].initWeights(hiddenlayerSizes[l-1])
