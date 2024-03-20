@@ -50,12 +50,16 @@ def makeNNforDataset(dataset,activationFunction):
 
 
     #init hidden layer(s)
-    for layer in layerSizes:
+    for l,size in enumerate(layerSizes):
         Nn.append([])
-        for i in range(features): # hardcode input for dataset
-            print("make  in layer",layer,"neuron",i)
-            Nn[layer].append(Neuron(activationFunction))
+        l +=1
+        for i in range(size): # hardcode input for dataset
+            print("make neruon in layer",l,"neuron",i)
+            Nn[l].append(Neuron(activationFunction))
+    
+    
     #init output
+            
 
 
 
