@@ -46,10 +46,9 @@ def makeNNforDataset(dataset,activationFunction):
 
     Nn = [[]]
     #init input
-    Nn[0].append([]) 
     for i in range(features): # hardcode input for dataset
         print("make neuron",i)
-        Nn[0][i] = Neuron(activationFunction)
+        Nn[0].append(Neuron(activationFunction))
 
 
     #init hidden layer(s)
