@@ -93,6 +93,14 @@ def backwardsPass(Nn,data,outputs,targetRow):
         out = outputs[-1][i]
         sigValue = outputNeuon.actFun.der(out) * (target - out)
         sigma.append(sigValue)
+
+    for l, hiddenLayer in reversed(enumerate(Nn[:-1])):
+        sigma.insert(0,[])
+        for i, neuron in enumerate(layer):
+            forwardSigma = 0
+            
+        
+
     
     print(sigma,target)
     pass
