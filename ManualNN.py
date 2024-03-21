@@ -15,19 +15,18 @@ class Neuron:
     #Previous layer is a list of inputNeurons
     def __init__(self, actFunction):
         #Initialize all n (+1 for the bias) weights in this neuron upon creation
-        self.bias = 0
         self.weights = [0]
         self.actFun = actFunction
 
     def initWeights(self,prevLayerSize):
-        self.weights = np.random.rand(prevLayerSize)
+        self.weights = np.random.rand(prevLayerSize + 1)
 
     def calcOutput(self, input):
         a = 0
         for i,inputFrom in enumerate(input):
-            a += inputFrom * self.weights[i]
+            a += inputFrom * self.weights[i+1]
 
-        return self.actFun.act(a) #TODO add bias
+        return self.actFun.act(a + self.weights[0])
     
     def str(self):
         return "(weights: " +  str(self.weights) + ")"
@@ -67,7 +66,7 @@ def makeNNforDataset(dataset,activationFunction):
     return Nn
 
 def forwardPass(Nn,data):
-
+    out = Nn[0]
     pass
 
 
@@ -108,3 +107,4 @@ tanh = activationFunction(tanh_act,tanh_der)
 relu = activationFunction(relu_act,relu_der)
 
 net = makeNNforDataset(dataset,relu)
+print(dataset.iloc[0])
