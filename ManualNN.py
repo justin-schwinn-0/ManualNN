@@ -4,7 +4,6 @@ import numpy as np
 import math
 
 powerplant = fetch_ucirepo(id=294)
-dataset = powerplant.data
 
 class activationFunction:
     def __init__(self, act, deriv) -> None:
@@ -20,7 +19,7 @@ class Neuron:
         self.actFun = actFunction
 
     def initWeights(self,prevLayerSize):
-        self.weights = np.random.rand(prevLayerSize + 1)
+        self.weights = np.zeros(prevLayerSize + 1)
 
     def calcOutput(self, input):
         a = 0
@@ -107,14 +106,15 @@ def backwardsPass(Nn,data,targetRow,learningRate):
         pass
     pass
 
-    print(Nn[-1][-1].weights)
-    print(len(Nn[-1][-1].weights))
-    print(len(Nn[-1]),len(Nn[-2]))
-    for i in range(1,len(Nn[-1][-1].weights)):
-        print("i:",i)
-        Nn[-1][-1].weights[i] += learningRate * delta[-1][i-1] * outputs[-2][i-1]
-        pass
-    print(Nn[-1][-1].weights)
+    for layer in range(len(Nn)):
+        for neuron in range(len(Nn[layer])):
+            Nn[layer][neuron].weights[0] += learningRate * delta[layer][neuron]
+            for weightIndex in range(1,len(Nn[layer][neuron].weights)):
+                if layer == 0:
+                    Nn[layer][neuron].weights[weightIndex] += learningRate * delta[layer][neuron] * inputs[weightIndex-1]
+                else:
+                    Nn[layer][neuron].weights[weightIndex] += learningRate * delta[layer][neuron] * outputs[layer-1][weightIndex-1]
+                pass
 
     # for l, layer in enumerate(Nn):
     #     print("**********",l)
@@ -129,9 +129,14 @@ def backwardsPass(Nn,data,targetRow,learningRate):
     #             # print("aft",neuron.weights[i])
     
     # print(delta,outputs,target)
+    return outputs[-1][-1],target
+
+def epoch(Nn,data,begin,end,learningRate):
+
+    for i in range(begin,end):
+        out,target = backwardsPass(Nn,data,i,learningRate)
+        print("Prediction:",out,"actual:",target, "delta:",(target-out))
     pass
-
-
 
 def sigmoid_act(net_sum):
     sigmoid_act1 = 1 / (1 + math.exp(-net_sum)) 
@@ -169,5 +174,8 @@ sigmoid = activationFunction(sigmoid_act,sigmoid_der)
 tanh = activationFunction(tanh_act,tanh_der)
 relu = activationFunction(relu_act,relu_der)
 
+dataset = powerplant.data
+
+
 net = makeNNforDataset(powerplant,relu)
-backwardsPass(net,dataset,0,0.1)
+epoch(net,dataset,0,9,0.1)
