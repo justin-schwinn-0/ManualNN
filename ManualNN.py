@@ -19,7 +19,7 @@ class Neuron:
         self.actFun = actFunction
 
     def initWeights(self,prevLayerSize):
-        self.weights = np.zeros(prevLayerSize + 1)
+        self.weights = np.random.rand(prevLayerSize + 1)
 
     def calcOutput(self, input):
         a = 0
@@ -33,12 +33,12 @@ class Neuron:
     def __str__(self):
         return "(weights: " +  str(self.weights) + ")"
 
-def makeNNforDataset(dataset,activationFunction):
+def makeNNforDataset(dataset,activationFunction,LayersArray):
     name = dataset.metadata["name"]
     features = dataset.metadata["num_features"]
     target = dataset.metadata["target_col"]
 
-    hiddenlayerSizes = [3,2] # output layer is implied
+    hiddenlayerSizes = LayersArray # output layer is implied
 
     Nn = []
 
@@ -115,20 +115,10 @@ def backwardsPass(Nn,data,targetRow,learningRate):
                 else:
                     Nn[layer][neuron].weights[weightIndex] += learningRate * delta[layer][neuron] * outputs[layer-1][weightIndex-1]
                 pass
+            pass
+        pass
+    pass
 
-    # for l, layer in enumerate(Nn):
-    #     print("**********",l)
-    #     for j,neuron in enumerate(layer):
-    #         print("----",j)
-
-    #         neuron.weights[0] += learningRate * delta[l][j]
-    #         for i in range(1,neuron.weights.__len__()):
-    #             # print("b4 ",w , learningRate,delta[l][j],outputs[l][j])
-    #             print(i)
-    #             neuron.weights[i] += learningRate * delta[l][j] * outputs[l-1][j]
-    #             # print("aft",neuron.weights[i])
-    
-    # print(delta,outputs,target)
     return outputs[-1][-1],target
 
 def epoch(Nn,data,begin,end,learningRate):
@@ -177,5 +167,5 @@ relu = activationFunction(relu_act,relu_der)
 dataset = powerplant.data
 
 
-net = makeNNforDataset(powerplant,relu)
-epoch(net,dataset,0,9,0.1)
+net = makeNNforDataset(powerplant,relu,[4,4,4])
+epoch(net,dataset,0,200,0.0000001)
