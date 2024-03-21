@@ -122,11 +122,19 @@ def backwardsPass(Nn,data,targetRow,learningRate):
     return outputs[-1][-1],target
 
 def epoch(Nn,data,begin,end,learningRate):
-
     for i in range(begin,end):
         out,target = backwardsPass(Nn,data,i,learningRate)
-        print("Prediction:",out,"actual:",target, "delta:",(target-out))
+        #print("Prediction:",out,"actual:",target, "delta:",(target-out))
     pass
+
+def squarederror(Nn,dataset, numtraining, numtest):
+    a = 0
+    for elementIndex in range(numtraining, len(dataset.features)):
+        outputs = forwardPass(Nn,dataset,elementIndex)
+        #print(getTargetData(dataset, elementIndex) - outputs[-1][0])
+        a += (getTargetData(dataset, elementIndex) - outputs[-1][0])**2
+
+    return (a / numtest)
 
 def sigmoid_act(net_sum):
     sigmoid_act1 = 1 / (1 + math.exp(-net_sum)) 
@@ -167,5 +175,18 @@ relu = activationFunction(relu_act,relu_der)
 dataset = powerplant.data
 
 
-net = makeNNforDataset(powerplant,relu,[4,4,4])
-epoch(net,dataset,0,200,0.0000001)
+numTraining = math.ceil(len(dataset.features) * .7)
+numTest = len(dataset.features) - numTraining
+
+
+scaledData = dataset.copy()
+print(dataset.features.iloc[0])
+print(dataset.targets.iloc[0])
+columns = ['AT','V','AP','RH']
+for col in columns:
+    scaledData["features"][col] = scaledData["features"][col] / scaledData["features"][col].abs().max()
+scaledData["targets"]["PE"] = scaledData["targets"]["PE"] / scaledData["targets"]["PE"].abs().max()
+
+net = makeNNforDataset(powerplant,relu,[5,5])
+epoch(net,dataset,0,numTraining,0.001)
+print("sqr Erorr:",squarederror(net,dataset, numTraining, numTest))
