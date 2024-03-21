@@ -39,7 +39,7 @@ def makeNNforDataset(dataset,activationFunction):
     features = dataset.metadata["num_features"]
     target = dataset.metadata["target_col"]
 
-    hiddenlayerSizes = [3] # 
+    hiddenlayerSizes = [3] # output layer is implied
 
     Nn = []
 
@@ -65,7 +65,6 @@ def getDataRow(data,row):
 
 def forwardPass(Nn,data,row):
     dataRow = getDataRow(data,row)
-    print(dataRow)
 
     NnOut = []
 
@@ -86,23 +85,31 @@ def getTargetData(data,row):
     return data.targets.iloc[row].to_numpy()
     
 
-def backwardsPass(Nn,data,outputs,targetRow):
-    sigma = []
+def backwardsPass(Nn,data,outputs,targetRow,learningRate):
+    delta = []
     target = getTargetData(data,targetRow)
     for i,outputNeuon in enumerate(Nn[-1]):
         out = outputs[-1][i]
-        sigValue = outputNeuon.actFun.der(out) * (target - out)
-        sigma.append(sigValue)
+        deltaValue = outputNeuon.actFun.der(out) * (target - out)
+        delta.append(deltaValue)
 
-    for l, hiddenLayer in reversed(enumerate(Nn[:-1])):
-        sigma.insert(0,[])
-        for i, neuron in enumerate(layer):
-            forwardSigma = 0
-            
-        
+    for l, hiddenLayer in reversed(list(enumerate(Nn[:-1]))):
+        delta.insert(0,[])
+        for i, neuron in enumerate(hiddenLayer):
+            weightDeltaSum = 0
+            for k,forwardNeuron in enumerate(Nn[l+1]):
+                weightDeltaSum += forwardNeuron.weights[i+1] * delta[l+1][k]
+            deltaValue = neuron.actFun.der(out) * weightDeltaSum
+            delta[0].append(deltaValue)
 
+    for l, layer in enumerate(Nn):
+        for j,neuron in enumerate(layer):
+            for i,w in enumerate(neuron.weights):
+                print("b4 ",w , learningRate,delta[l][j],outputs[l][j])
+                neuron.weights[i] += learningRate * delta[l][j] * outputs[l][j]
+                print("aft",neuron.weights[i])
     
-    print(sigma,target)
+    print(delta,outputs,target)
     pass
 
 def sigmoid_act(net_sum):
@@ -143,5 +150,4 @@ relu = activationFunction(relu_act,relu_der)
 
 net = makeNNforDataset(powerplant,relu)
 nnOutputs = forwardPass(net,dataset,0)
-backwardsPass(net,dataset,nnOutputs,0)
-print(nnOutputs)
+backwardsPass(net,dataset,nnOutputs,0,0.1)
