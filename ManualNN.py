@@ -3,12 +3,13 @@ from ucimlrepo import fetch_ucirepo
 import numpy as np
 import math
 
-dataset = fetch_ucirepo(id=294)
+powerplant = fetch_ucirepo(id=294)
+dataset = powerplant.data
 
 class activationFunction:
     def __init__(self, act, deriv) -> None:
-        self.activation = act
-        self.derivative = deriv
+        self.act = act
+        self.der = deriv
         pass
 
 class Neuron:
@@ -24,7 +25,9 @@ class Neuron:
     def calcOutput(self, input):
         a = 0
         for i,inputFrom in enumerate(input):
+            # print(self.weights[i+1], "*" , inputFrom," + ", a ,"=")
             a += inputFrom * self.weights[i+1]
+            # print(a)
 
         return self.actFun.act(a + self.weights[0])
     
@@ -65,8 +68,12 @@ def makeNNforDataset(dataset,activationFunction):
     
     return Nn
 
+def getDataRow(data,row):
+    return data.features.iloc[row].to_numpy()
+
 def forwardPass(Nn,data):
-    out = Nn[0]
+    dataRow = getDataRow(data,0)
+    out = Nn[0][0].calcOutput(dataRow)
     pass
 
 
@@ -106,5 +113,5 @@ sigmoid = activationFunction(sigmoid_act,sigmoid_der)
 tanh = activationFunction(tanh_act,tanh_der)
 relu = activationFunction(relu_act,relu_der)
 
-net = makeNNforDataset(dataset,relu)
-print(dataset.iloc[0])
+net = makeNNforDataset(powerplant,relu)
+forwardPass(net,dataset)
