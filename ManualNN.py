@@ -60,11 +60,10 @@ def makeNNforDataset(dataset,activationFunction):
     #init output
     outputNeuron = Neuron(activationFunction)
     outputNeuron.initWeights(Nn[-1].__len__())
-    print("output:", outputNeuron.str()) 
     Nn.append([outputNeuron])
 
-    for layer in Nn:
-        print("layer with", layer.__len__(), "Neurons")
+    # for layer in Nn:
+    #     print("layer with", layer.__len__(), "Neurons")
     
     return Nn
 
@@ -73,7 +72,23 @@ def getDataRow(data,row):
 
 def forwardPass(Nn,data):
     dataRow = getDataRow(data,0)
-    out = Nn[0][0].calcOutput(dataRow)
+    print(dataRow)
+
+    NnOut = []
+
+    for l,layer in enumerate(Nn):
+        neuronInput = []
+        if l == 0:
+            neuronInput = dataRow
+        else:
+            neuronInput = NnOut[l-1]
+        NnOut.append([])
+        for n in layer:
+            NnOut[l].append(n.calcOutput(neuronInput))
+            pass
+
+    print(NnOut,data.targets.iloc[0])
+
     pass
 
 
