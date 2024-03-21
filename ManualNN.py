@@ -39,7 +39,7 @@ def makeNNforDataset(dataset,activationFunction):
     features = dataset.metadata["num_features"]
     target = dataset.metadata["target_col"]
 
-    hiddenlayerSizes = [3] # output layer is implied
+    hiddenlayerSizes = [3,2] # output layer is implied
 
     Nn = []
 
@@ -91,24 +91,36 @@ def backwardsPass(Nn,data,outputs,targetRow,learningRate):
         out = outputs[-1][i]
         deltaValue = outputNeuon.actFun.der(out) * (target - out)
         delta.append(deltaValue)
+    pass
 
     for l, hiddenLayer in reversed(list(enumerate(Nn[:-1]))):
         delta.insert(0,[])
         for i, neuron in enumerate(hiddenLayer):
             weightDeltaSum = 0
             for k,forwardNeuron in enumerate(Nn[l+1]):
-                weightDeltaSum += forwardNeuron.weights[i+1] * delta[l+1][k]
-            deltaValue = neuron.actFun.der(out) * weightDeltaSum
+                weightDeltaSum += forwardNeuron.weights[i+1] * delta[1][k]
+            deltaValue = neuron.actFun.der(outputs[l][i]) * weightDeltaSum
             delta[0].append(deltaValue)
+        pass
+    pass
 
-    for l, layer in enumerate(Nn):
-        for j,neuron in enumerate(layer):
-            for i,w in enumerate(neuron.weights):
-                print("b4 ",w , learningRate,delta[l][j],outputs[l][j])
-                neuron.weights[i] += learningRate * delta[l][j] * outputs[l][i]
-                print("aft",neuron.weights[i])
+    print(Nn[0][0].weights)
+    Nn[0][0].weights[1] += learningRate * delta[1][0] * outputs[1][0]
+    print(Nn[0][0].weights)
+
+    # for l, layer in enumerate(Nn):
+    #     print("**********",l)
+    #     for j,neuron in enumerate(layer):
+    #         print("----",j)
+
+    #         neuron.weights[0] += learningRate * delta[l][j]
+    #         for i in range(1,neuron.weights.__len__()):
+    #             # print("b4 ",w , learningRate,delta[l][j],outputs[l][j])
+    #             print(i)
+    #             neuron.weights[i] += learningRate * delta[l][j] * outputs[l-1][j]
+    #             # print("aft",neuron.weights[i])
     
-    print(delta,outputs,target)
+    # print(delta,outputs,target)
     pass
 
 
