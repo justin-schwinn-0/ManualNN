@@ -84,12 +84,15 @@ def forwardPass(Nn,data,row):
 def getTargetData(data,row):
     return data.targets.iloc[row].to_numpy()
     
-def backwardsPass(Nn,data,outputs,targetRow,learningRate):
-    delta = []
+def backwardsPass(Nn,data,targetRow,learningRate):
+    inputs= getDataRow(data,targetRow)
+    outputs = forwardPass(net,dataset,targetRow)
     target = getTargetData(data,targetRow)
-    for i,outputNeuon in enumerate(Nn[-1]):
+    
+    delta = []
+    for i,outputNeuron in enumerate(Nn[-1]):
         out = outputs[-1][i]
-        deltaValue = outputNeuon.actFun.der(out) * (target - out)
+        deltaValue = outputNeuron.actFun.der(out) * (target - out)
         delta.append(deltaValue)
     pass
 
@@ -104,9 +107,14 @@ def backwardsPass(Nn,data,outputs,targetRow,learningRate):
         pass
     pass
 
-    print(Nn[0][0].weights)
-    Nn[0][0].weights[1] += learningRate * delta[1][0] * outputs[1][0]
-    print(Nn[0][0].weights)
+    print(Nn[-1][-1].weights)
+    print(len(Nn[-1][-1].weights))
+    print(len(Nn[-1]),len(Nn[-2]))
+    for i in range(1,len(Nn[-1][-1].weights)):
+        print("i:",i)
+        Nn[-1][-1].weights[i] += learningRate * delta[-1][i-1] * outputs[-2][i-1]
+        pass
+    print(Nn[-1][-1].weights)
 
     # for l, layer in enumerate(Nn):
     #     print("**********",l)
@@ -162,5 +170,4 @@ tanh = activationFunction(tanh_act,tanh_der)
 relu = activationFunction(relu_act,relu_der)
 
 net = makeNNforDataset(powerplant,relu)
-nnOutputs = forwardPass(net,dataset,0)
-backwardsPass(net,dataset,nnOutputs,0,0.1)
+backwardsPass(net,dataset,0,0.1)
