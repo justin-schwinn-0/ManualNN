@@ -84,7 +84,6 @@ def forwardPass(Nn,data,row):
 def getTargetData(data,row):
     return data.targets.iloc[row].to_numpy()
     
-
 def backwardsPass(Nn,data,outputs,targetRow,learningRate):
     delta = []
     target = getTargetData(data,targetRow)
@@ -106,11 +105,13 @@ def backwardsPass(Nn,data,outputs,targetRow,learningRate):
         for j,neuron in enumerate(layer):
             for i,w in enumerate(neuron.weights):
                 print("b4 ",w , learningRate,delta[l][j],outputs[l][j])
-                neuron.weights[i] += learningRate * delta[l][j] * outputs[l][j]
+                neuron.weights[i] += learningRate * delta[l][j] * outputs[l][i]
                 print("aft",neuron.weights[i])
     
     print(delta,outputs,target)
     pass
+
+
 
 def sigmoid_act(net_sum):
     sigmoid_act1 = 1 / (1 + math.exp(-net_sum)) 
