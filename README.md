@@ -1,2 +1,2 @@
-- Takes in 4 variables about a power plant and predicts powe r
+- Takes in 4 variables about a power plant and predicts power
 - Dataset: https://archive.ics.uci.edu/dataset/294/combined+cycle+power+plant
